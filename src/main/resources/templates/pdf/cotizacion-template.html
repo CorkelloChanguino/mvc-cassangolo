@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <link rel="stylesheet" href="cotizacion-styles.css"/>
+
+    <style>
+        @page { size: A4; margin: 18mm; }
+        body { font-family: Arial, sans-serif; text-align: center; }
+        .contenedor-central {
+            width: 75%;
+            margin: 0 auto;
+        }
+
+        table { 
+            margin: 0 auto;
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        td {
+            padding: 6px 8px;
+            font-size: 14px;
+        }
+
+        /* COLORES */
+        .cabecera-lote       { background: #FFD740; font-weight: bold; } /* Amarillo */
+        .gris                { background: #E0E0E0; }
+        .descuento-label     { background: #FF0000; color: white; font-weight: bold; }
+        .descuento-values    { background: #F8B6B6; }
+        .precio-final-label  { background: #FFE082; font-weight: bold; }
+        .precio-final-value  { background: white; font-weight: bold; }
+
+        .financiamiento-titulo {
+            background: #757575;
+            color: white;
+            font-weight: bold;
+        }
+
+        .financiamiento-gray { background: #E0E0E0; }
+
+        /* Empresa */
+        .empresa-box {
+            background-color: #F8B6B6;
+            border-radius: 20px;
+            padding: 12px;
+            text-align: center;
+            margin: 30px auto 20px auto;
+            width: 70%;
+            font-size: 15px;
+        }
+
+        /* Banco */
+        .banco-container { margin-top: 30px; }
+
+        .banco-row {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            margin-top: 10px;
+        }
+
+        .banco-img {
+            width: 110px;
+            margin-right: 20px;
+        }
+
+        .banco-text { text-align: left; }
+
+        .titulo-banco {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 6px;
+        }
+
+        .nota {
+            margin-top: 35px;
+            font-size: 12.5px;
+            font-style: italic;
+            text-align: center;
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- LOGO -->
+<img  src="data:image/png;base64,LOGO_BASE64" style="width:120px; margin-bottom:15px;"/>
+
+<h2 style="margin-bottom:20px;">COTIZACIÓN DE LOTE</h2>
+
+
+<div class="contenedor-central">
+
+    <!-- ============================= -->
+    <!--       TABLA DEL LOTE          -->
+    <!-- ============================= -->
+    <table>
+        <tr><td class="cabecera-lote" colspan="3">INFORMACIÓN DEL LOTE</td></tr>
+
+        <tr class="gris">
+            <td style="text-align:left;">Lote</td>
+            <td colspan="2" style="text-align:right;">
+                <span th:text="${cot.lote.manzana}"></span> -
+                <span th:text="${cot.lote.numero}"></span> - Etapa
+                <span th:text="${cot.lote.etapa}"></span>
+            </td>
+        </tr>
+
+        <tr class="gris">
+            <td style="text-align:left;">Área m²</td>
+            <td></td>
+            <td style="text-align:right;" th:text="${cot.lote.metrosCuadrados}"></td>
+        </tr>
+
+        <tr class="gris">
+            <td style="text-align:left;">Precio x m²</td>
+            <td>S/</td>
+            <td style="text-align:right;" th:text="${cot.lote.precioM2}"></td>
+        </tr>
+
+        <tr class="gris">
+            <td style="text-align:left;">TOTAL</td>
+            <td>S/</td>
+            <td style="text-align:right;" th:text="${cot.precioTotal}"></td>
+        </tr>
+
+        <!-- DESCUENTO -->
+        <tr>
+            <td class="descuento-label">Descuento</td>
+            <td class="descuento-values" th:text="${cot.descuento + '%'}"></td>
+            <td class="descuento-values" style="text-align:right;"
+                th:text="${(cot.descuento / 100) * cot.precioTotal}"></td>
+        </tr>
+    </table>
+
+    <!-- PRECIO FINAL -->
+    <table style="margin-top:20px; width:60%;">
+        <tr>
+            <td class="precio-final-label" style="text-align:left;">PRECIO FINAL</td>
+            <td class="precio-final-value" style="text-align:right;">
+                S/. <span th:text="${cot.precioTotal - (cot.precioTotal * cot.descuento / 100)}"></span>
+            </td>
+        </tr>
+    </table>
+
+
+    <!-- ============================= -->
+    <!--       TABLA FINANCIAMIENTO    -->
+    <!-- ============================= -->
+    <table style="margin-top:35px; width:100%;">
+        <tr>
+            <td class="financiamiento-titulo" colspan="3">Financiamiento</td>
+        </tr>
+
+        <tr class="financiamiento-gray">
+            <td style="text-align:left;">Inicial</td>
+            <td th:text="${(cot.inicial * 100 / cot.precioTotal) + '%'}"></td>
+            <td style="text-align:right;" th:text="${cot.inicial}"></td>
+        </tr>
+
+        <tr class="financiamiento-gray">
+            <td style="text-align:left;">Saldo</td>
+            <td th:text="${100 - (cot.inicial * 100 / cot.precioTotal) + '%'}"></td>
+            <td style="text-align:right;" th:text="${cot.precioTotal - cot.inicial}"></td>
+        </tr>
+
+        <tr class="financiamiento-gray">
+            <td style="text-align:left;">Plazo (meses)</td>
+            <td></td>
+            <td style="text-align:right;" th:text="${cot.meses}"></td>
+        </tr>
+
+        <tr class="financiamiento-gray">
+            <td style="text-align:left;">Cuota</td>
+            <td>S/</td>
+            <td style="text-align:right;" th:text="${cot.cuotaMensual}"></td>
+        </tr>
+    </table>
+
+
+    <!-- CAJA EMPRESA -->
+    <div class="empresa-box">
+        <div><b>CONSTRUPIURA S.A.C</b></div>
+        <div>Números de cuenta</div>
+    </div>
+
+    <!-- DATOS DEL BANCO -->
+    <div class="banco-container">
+
+        <div class="titulo-banco">DATOS BANCARIOS</div>
+
+        <div class="banco-row">
+            <img src="data:image/png;base64,INTERBANK_BASE64" class="banco-img"/>
+
+            <div class="banco-text">
+                <div class="titulo-banco">INTERBANK</div>
+                <div>SOLES: 720-3005833982</div>
+                <div>CCI SOLES: 00247500929622008922</div>
+                <div>DÓLARES: 720-3006750419</div>
+                <div>CCI DÓLARES: 00372000300472053004</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- NOTA -->
+    <div class="nota">
+        <strong>CADA COTIZACIÓN ES VÁLIDA POR 7 DÍAS DESDE SU EMISIÓN</strong>
+    </div>
+
+</div>
+
+</body>
+</html>

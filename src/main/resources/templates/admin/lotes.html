@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head th:replace="layout :: head" th:with="titulo='Gestión de Lotes'"></head>
+
+<body class="color-fondo">
+
+<nav th:replace="layout :: navbar"></nav>
+
+<div class="container mt-4">
+
+    <h2 class="mb-3">Gestión de Lotes</h2>
+
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Etapa</th>
+            <th>Manzana</th>
+            <th>Número</th>
+            <th>Área</th>
+            <th>Estado</th>
+            <th>Cambiar Estado</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="lote : ${lotes}">
+            <td th:text="${lote.id}"></td>
+            <td th:text="${lote.etapa}"></td>
+            <td th:text="${lote.manzana}"></td>
+            <td th:text="${lote.numero}"></td>
+            <td th:text="${lote.metrosCuadrados} + ' m²'"></td>
+
+            <!-- Estado actual -->
+            <td>
+                <span class="badge"
+                      th:text="${lote.estado}"
+                      th:classappend="${lote.estado.equals('DISPONIBLE')} ? ' bg-success' :
+                                      (${lote.estado.equals('RESERVADO')} ? ' bg-warning text-dark' :
+                                      ' bg-danger')">
+                </span>
+            </td>
+
+            <!-- Form para actualizar estado -->
+            <td>
+                <form th:action="@{'/admin/lotes/actualizar-estado/' + ${lote.id}}"
+                      method="post"
+                      class="d-flex">
+
+                    <select class="form-select form-select-sm me-2" name="estado">
+                        <option value="DISPONIBLE"
+                                th:selected="${lote.estado.equals('DISPONIBLE')}">
+                            DISPONIBLE
+                        </option>
+
+                        <option value="RESERVADO"
+                                th:selected="${lote.estado.equals('RESERVADO')}">
+                            RESERVADO
+                        </option>
+
+                        <option value="VENDIDO"
+                                th:selected="${lote.estado.equals('VENDIDO')}">
+                            VENDIDO
+                        </option>
+                    </select>
+
+                    <button class="btn btn-primary btn-sm" type="submit">
+                        Guardar
+                    </button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+
+    </table>
+
+</div>
+
+<footer th:replace="layout :: footer"></footer>
+<div th:replace="layout :: scripts"></div>
+
+</body>
+</html>
