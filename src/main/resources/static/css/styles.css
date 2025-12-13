@@ -72,15 +72,18 @@
 
 .lote.disponible {
     fill: #dcdcdc !important;
+    fill-opacity:0.3 !important;
 }
 
 .lote.vendido {
     fill: #b54837 !important;
     pointer-events: none;
+    fill-opacity:0.3 !important;
 }
 
 .lote.reservado {
     fill: #ffcb31 !important;
+    fill-opacity:0.3 !important;
 }
 
 .lote.disponible:hover { fill: #c2ffaf !important; }
