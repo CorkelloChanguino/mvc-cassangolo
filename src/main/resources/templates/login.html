@@ -3,34 +3,42 @@
 
 <head th:replace="layout :: head"></head>
 
-<body class="loginBody">
+<body class="color-navbar">
 
     <div class="position-absolute 
-    start-50 top-50 translate-middle"
-    style="width:360px;">
-        
-            <div class="card bg-secondary bg-opacity-50 text-white">
-                <form  th:action="@{/login}" method="post">
-                    <div>
-                        <h3 class="text-center">Iniciar Sesión</h3>
-                        <img th:src="@{/img/user.png}" width="160px">
-                        <label>Bienvenidos al Sistema</label>
-                    </div>
-                    <div>
-                        <input type="text" class="form-control mb-3" placeholder="Nombre de usuario"
-                        name="username">
-                        
-                    </div>
-                    <div>
-                        <input type="password" class="form-control mb-3" placeholder="Contraseña"
-                        name="password">
-                    </div>
-                    <div class="d-grid">
-                        <button class="btn btn-primary m-2">Ingresar</button>
-                    </div>
-                </form>
+        start-50 top-50 translate-middle" style="width:360px;">
+
+
+
+
+        <div class="card bg-secondary bg-opacity-50 text-white p-4">
+            <div class="d-flex justify-content-center mb-3">
+                <img th:src="@{/img/logo-c-a-j.jpg}" width="450px" class="img-fluid">
             </div>
-        
+
+            <form th:action="@{/login}" method="post">
+
+                <div class="d-flex align-items-center justify-content-center mb-2">
+                    <img th:src="@{/img/user.png}" width="160px">
+                    <label class="ms-3">Inicio de Sesión</label>
+                </div>
+
+                <div>
+                    <input type="text" class="form-control mb-3" placeholder="Nombre de usuario" name="username">
+                </div>
+
+                <div>
+                    <input type="password" class="form-control mb-3" placeholder="Contraseña" name="password">
+                </div>
+
+                <div class="d-grid">
+                    <button class="btn btn-primary m-2">Ingresar</button>
+                </div>
+
+            </form>
+
+        </div>
+
     </div>
 
 </body>

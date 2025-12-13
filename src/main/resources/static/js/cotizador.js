@@ -9,22 +9,18 @@ export function cargarDatosCotizador(lote) {
     document.getElementById("numeroTexto").textContent = lote.numero;
     document.getElementById("areaTexto").textContent = lote.metrosCuadrados;
 
-    // Guardar ID real para backend
+    // Guardar ID real
     document.getElementById("loteId").value = lote.id;
 
-    // Calcular total
     const total = Number(lote.metrosCuadrados) * Number(lote.precioM2);
-
-    // input → usar value
     document.getElementById("precioTotal").value = total;
 
-    // Limpiar cálculos previos
-    document.getElementById("precioFinal").value = "";
-    document.getElementById("inicialMonto").value = "";
-    document.getElementById("saldoMonto").value = "";
-    document.getElementById("cuotaMensual").value = "";
+    // Limpiar
+    ["precioFinal", "inicialMonto", "saldoMonto", "cuotaMensual"].forEach(id => {
+        document.getElementById(id).value = "";
+    });
 
-    // Guardar lote en memoria
+    // Guardar en memoria
     window.loteSeleccionado = {
         ...lote,
         metrosCuadrados: Number(lote.metrosCuadrados),
@@ -33,7 +29,7 @@ export function cargarDatosCotizador(lote) {
 }
 
 // ===============================
-// RECÁLCULO AUTOMÁTICO
+// RECÁLCULO AUTOMÁTICO GENERAL
 // ===============================
 function recalcular() {
 
@@ -45,47 +41,82 @@ function recalcular() {
     const i = parseFloat(document.getElementById("pagoInicial").value) || 20;
     const m = parseFloat(document.getElementById("meses")?.value) || 1;
 
-    // PRECIO FINAL
     const precioFinal = total - (total * d / 100);
-    setIfExists("precioFinal", precioFinal);
+    set("precioFinal", precioFinal);
 
-    // DESCUENTO EN SOLES
     const descuentoMonto = total * (d / 100);
-    setIfExists("descuentoMonto", descuentoMonto.toFixed(2));
+    set("descuentoMonto", descuentoMonto.toFixed(2));
 
-    // INICIAL
     const inicialMonto = precioFinal * (i / 100);
-    setIfExists("inicialMonto", inicialMonto);
-
-    // SALDO
     const saldoMonto = precioFinal - inicialMonto;
-    setIfExists("saldoMonto", saldoMonto);
 
-    // SALDO %
-    const saldoPorcentaje = 100 - i;
-    setIfExists("saldoPorcentaje", saldoPorcentaje.toFixed(2));
+    set("inicialMonto", inicialMonto);
+    set("saldoMonto", saldoMonto);
+    set("saldoPorcentaje", (100 - i).toFixed(2));
 
-    // CUOTA
     const cuota = saldoMonto / m;
-    setIfExists("cuotaMensual", cuota.toFixed(2));
+    set("cuotaMensual", cuota.toFixed(2));
 }
 
 
-// Helper para evitar errores si algún ID aún no existe
-function setIfExists(id, value) {
+// ===============================
+// EDICIÓN MANUAL DE MONTOS
+// ===============================
+
+// Inicial S/
+document.getElementById("inicialMonto").addEventListener("input", function () {
+    if (!window.loteSeleccionado) return;
+
+    const precioFinal = parseFloat(document.getElementById("precioFinal").value) || 0;
+    let inicial = parseFloat(this.value) || 0;
+
+    if (inicial > precioFinal) inicial = precioFinal;
+
+    const porcentaje = (inicial / precioFinal) * 100;
+    const saldo = precioFinal - inicial;
+
+    set("pagoInicial", porcentaje.toFixed(2));
+    set("saldoMonto", saldo);
+    set("saldoPorcentaje", (100 - porcentaje).toFixed(2));
+
+    const meses = parseFloat(document.getElementById("meses").value) || 1;
+    set("cuotaMensual", (saldo / meses).toFixed(2));
+});
+
+// Saldo S/
+document.getElementById("saldoMonto").addEventListener("input", function () {
+    if (!window.loteSeleccionado) return;
+
+    const precioFinal = parseFloat(document.getElementById("precioFinal").value) || 0;
+    let saldo = parseFloat(this.value) || 0;
+
+    if (saldo > precioFinal) saldo = precioFinal;
+
+    const inicial = precioFinal - saldo;
+    const porcentaje = (inicial / precioFinal) * 100;
+
+    set("inicialMonto", inicial);
+    set("pagoInicial", porcentaje.toFixed(2));
+    set("saldoPorcentaje", (100 - porcentaje).toFixed(2));
+
+    const meses = parseFloat(document.getElementById("meses").value) || 1;
+    set("cuotaMensual", (saldo / meses).toFixed(2));
+});
+
+
+// ===============================
+// Helper
+// ===============================
+function set(id, value) {
     const el = document.getElementById(id);
     if (!el) return;
-
-    if (el.tagName === "INPUT") {
-        el.value = value;
-    } else {
-        el.textContent = value;
-    }
+    el.value = value;
 }
 
 // ===============================
-// LISTENERS
+// LISTENERS DE CÁLCULO NORMAL
 // ===============================
 document.getElementById("descuento")?.addEventListener("input", recalcular);
 document.getElementById("pagoInicial")?.addEventListener("input", recalcular);
 document.getElementById("meses")?.addEventListener("input", recalcular);
+
