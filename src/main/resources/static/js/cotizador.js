@@ -8,6 +8,7 @@ export function cargarDatosCotizador(lote) {
     document.getElementById("manzanaTexto").textContent = lote.manzana;
     document.getElementById("numeroTexto").textContent = lote.numero;
     document.getElementById("areaTexto").textContent = lote.metrosCuadrados;
+    document.getElementById("precioM2Texto").textContent = lote.precioM2.toFixed(2);
 
     // Guardar ID real
     document.getElementById("loteId").value = lote.id;
