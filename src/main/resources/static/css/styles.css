@@ -87,8 +87,8 @@
 }
 
 .lote.seleccionado{
-    fill:red;
-    opacity: 0.7;
+    fill:red !important; 
+    opacity: 0.7 !important;
 }
 
 .lote.disponible:hover { fill: #c2ffaf !important; }
