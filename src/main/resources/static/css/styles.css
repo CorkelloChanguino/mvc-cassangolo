@@ -76,27 +76,20 @@
 }
 
 .lote.vendido {
-    fill: #b54837 !important;
+    fill: rgb(253, 204, 102) !important;
     pointer-events: none;
-    fill-opacity:0.3 !important;
+    fill-opacity:0.6 !important;
 }
 
 .lote.reservado {
-    fill: #ffcb31 !important;
-    fill-opacity:0.3 !important;
+    fill: #fd7e14 !important;
+    fill-opacity:0.4 !important;
 }
 
 .lote.disponible:hover { fill: #c2ffaf !important; }
-.lote.reservado:hover { fill: #e4af0f !important; }
+.lote.reservado:hover { fill: #fd6614 !important; }
 
 #tooltip {
     font-weight: bold;
 }
 
-.loginBody{
-    background-image: url("img/bg1.jpg");
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    height: 100%;
-}
