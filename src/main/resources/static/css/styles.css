@@ -86,6 +86,11 @@
     fill-opacity:0.4 !important;
 }
 
+.lote.seleccionado{
+    fill:red;
+    opacity: 0.7;
+}
+
 .lote.disponible:hover { fill: #c2ffaf !important; }
 .lote.reservado:hover { fill: #fd6614 !important; }
 
