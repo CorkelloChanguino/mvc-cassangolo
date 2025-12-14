@@ -78,7 +78,7 @@
 .lote.vendido {
     fill: rgb(253, 204, 102) !important;
     pointer-events: none;
-    fill-opacity:0.6 !important;
+    fill-opacity:0.4 !important;
 }
 
 .lote.reservado {
