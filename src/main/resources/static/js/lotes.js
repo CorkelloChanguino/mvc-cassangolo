@@ -30,8 +30,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 svgLote.addEventListener("click", () => {
 
                     document.querySelectorAll(".lote")
-                        .forEach(l => l.classList.remove(".lote.seleccionado"));
-                    svgLote.classList.add(".lote.seleccionado");
+                        .forEach(l => l.classList.remove("seleccionado"));
+                    svgLote.classList.add("seleccionado");
+
 
                     const loteData = {
                         id: svgLote.dataset.id,
