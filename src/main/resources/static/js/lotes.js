@@ -31,7 +31,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     document.querySelectorAll(".lote")
                         .forEach(l => l.classList.remove("seleccionado"));
+
                     svgLote.classList.add("seleccionado");
+
 
 
                     const loteData = {
