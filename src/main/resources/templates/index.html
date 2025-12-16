@@ -8,28 +8,37 @@
 
     <nav th:replace="layout :: navbar"></nav>
 
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
+
+    <!--<img th:src="@{/img/cassangolo.jpeg}" class="img-fluid"alt="cassa angolo foto"/>-->
+
+
+
+
+    <div id="carouselExample" class="carousel slide">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img th:src="@{/img/first-slide.jpeg}" class="d-block w-100" alt="First Slide">
+            </div>
+            <div class="carousel-item">
+                <img th:src="@{/img/second-slide.jpeg}" class="d-block w-100" alt="Second Slide">
+            </div>
+            <div class="carousel-item">
+                <img th:src="@{/img/third-slide.jpeg}" class="d-block w-100" alt="Third Slide">
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Anterior</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Siguiente</span>
+        </button>
+    </div>
+
+
+
+
     <br>
 
 
