@@ -1,5 +1,3 @@
-import { cargarDatosCotizador } from "./cotizador.js";
-
 document.addEventListener("DOMContentLoaded", () => {
 
     const g = document.getElementById("tooltip");
@@ -12,68 +10,69 @@ document.addEventListener("DOMContentLoaded", () => {
 
             lotes.forEach(lote => {
 
-                const svgLote = document.getElementById(`lote-${lote.manzana}-${lote.numero}`);
+                const svgLote = document.getElementById(
+                    `lote-${lote.manzana}-${lote.numero}`
+                );
                 if (!svgLote) return;
 
-                // Dataset
-                svgLote.dataset.id = lote.id;
-                svgLote.dataset.numero = lote.numero;
+                // ===== CLASES =====
+                svgLote.classList.add("lote", lote.estado.toLowerCase());
+
+                // ===== DATASET (tooltip) =====
                 svgLote.dataset.manzana = lote.manzana;
+                svgLote.dataset.numero = lote.numero;
                 svgLote.dataset.m2 = lote.metrosCuadrados;
                 svgLote.dataset.total = lote.metrosCuadrados * lote.precioM2;
 
-                // Colores
-                svgLote.classList.add("lote");
-                svgLote.classList.add(lote.estado.toLowerCase());
+                // ===== CLICK → COTIZADOR =====
+                if (lote.estado === "DISPONIBLE") {
+                    svgLote.addEventListener("click", () => {
+                        window.location.href =
+                            `/cotizaciones/cotizar/lote/${lote.id}`;
+                    });
+                }
 
-                // Click
-                svgLote.addEventListener("click", () => {
+                // ===== TOOLTIP SOLO DISPONIBLES =====
+                if (lote.estado === "DISPONIBLE") {
 
-                    document.querySelectorAll(".lote")
-                        .forEach(l => l.classList.remove("seleccionado"));
+                    svgLote.addEventListener("mousemove", e => {
 
-                    svgLote.classList.add("seleccionado");
+                        const svg = svgLote.ownerSVGElement;
+                        const pt = svg.createSVGPoint();
+                        pt.x = e.clientX;
+                        pt.y = e.clientY;
 
+                        const cursor =
+                            pt.matrixTransform(svg.getScreenCTM().inverse());
 
+                        const txt =
+                            `Mz ${svgLote.dataset.manzana} - ` +
+                            `Lote ${svgLote.dataset.numero} • ` +
+                            `${svgLote.dataset.m2} m² • ` +
+                            `S/ ${Number(svgLote.dataset.total).toLocaleString("es-PE", {
+                                minimumFractionDigits: 2
+                            })}`;
 
-                    const loteData = {
-                        id: svgLote.dataset.id,
-                        etapa: lote.etapa,
-                        numero: svgLote.dataset.numero,
-                        manzana: svgLote.dataset.manzana,
-                        metrosCuadrados: svgLote.dataset.m2,
-                        precioM2: lote.precioM2,
-                        total: svgLote.dataset.total
-                    };
+                        textEl.textContent = txt;
 
-                    cargarDatosCotizador(loteData);
-                });
+                        const bbox = textEl.getBBox();
+                        bg.setAttribute("x", bbox.x - 6);
+                        bg.setAttribute("y", bbox.y - 4);
+                        bg.setAttribute("width", bbox.width + 12);
+                        bg.setAttribute("height", bbox.height + 8);
+
+                        g.setAttribute(
+                            "transform",
+                            `translate(${cursor.x + 12}, ${cursor.y - 12})`
+                        );
+                        g.setAttribute("visibility", "visible");
+                    });
+
+                    svgLote.addEventListener("mouseleave", () => {
+                        g.setAttribute("visibility", "hidden");
+                    });
+                }
             });
-
-            // ===== TOOLTIP =====
-            document.querySelectorAll(".lote.disponible").forEach(lote => {
-
-                lote.addEventListener("mousemove", e => {
-
-                    const txt = `Mz ${lote.dataset.manzana} - Lote ${lote.dataset.numero} • ${lote.dataset.m2} m² • S/ ${lote.dataset.total}`;
-                    textEl.textContent = txt;
-
-                    const bbox = textEl.getBBox();
-                    bg.setAttribute("x", bbox.x - 6);
-                    bg.setAttribute("y", bbox.y - 4);
-                    bg.setAttribute("width", bbox.width + 12);
-                    bg.setAttribute("height", bbox.height + 8);
-
-                    g.setAttribute("transform", `translate(${e.offsetX + 12}, ${e.offsetY - 12})`);
-                    g.setAttribute("visibility", "visible");
-                });
-
-                lote.addEventListener("mouseleave", () => {
-                    g.setAttribute("visibility", "hidden");
-                });
-            });
-
         })
         .catch(err => console.error("Error cargando lotes:", err));
-
 });

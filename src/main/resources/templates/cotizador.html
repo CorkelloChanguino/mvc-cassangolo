@@ -1,160 +1,166 @@
-<div th:fragment="cotizacionForm">
+<!DOCTYPE html>
+<html lang="en">
 
-    <form th:action="@{/cotizaciones/crear}" method="post" id="formCotizacion">
+<head th:replace="layout :: head"></head>
 
-        <!-- ===================== -->
-        <!--     DATOS DEL LOTE    -->
-        <!-- ===================== -->
+<body class="color-fondo">
 
-        <h4 class="mb-3">Datos del Lote</h4>
+    <nav th:replace="layout :: navbar"></nav>
 
-        <table class="table table-sm align-middle">
-            <tbody>
+    <div class="container mt-4">
 
-                <tr>
-                    <th class="fw-bold" style="width: 40%;">Estructura:</th>
-                    <td>
-                        <span id="manzanaTexto">—</span> -
-                        <span id="numeroTexto">—</span> |
-                        Etapa <span id="etapaTexto">—</span>
-                    </td>
-                </tr>
+        <form th:action="@{/cotizaciones/crear}" method="post" id="formCotizacion">
 
-                <tr>
-                    <th class="fw-bold">Área (m²):</th>
-                    <td><span id="areaTexto">—</span></td>
-                </tr>
+            <h4 class="mb-3">Datos del Lote</h4>
 
-                <tr>
-                    <th class="fw-bold">Precio x m²:</th>
-                    <td>S/ <span id="precioM2Texto">—</span></td>
-                </tr>
+            <table class="table table-sm align-middle">
+                <tbody>
 
-                <tr>
-                    <th class="fw-bold">Total estimado:</th>
-                    <td>
-                        <input type="text" class="form-control form-control-sm" id="precioTotal" name="precioTotal"
-                            readonly>
-                    </td>
-                </tr>
+                    <tr>
+                        <th class="fw-bold" style="width: 40%;">Estructura:</th>
+                        <td>
+                            <span th:text="${lote.manzana}"></span> -
+                            <span th:text="${lote.numero}"></span> |
+                            Etapa <span th:text="${lote.etapa}"></span>
+                        </td>
+                    </tr>
 
-            </tbody>
-        </table>
+                    <tr>
+                        <th class="fw-bold">Área (m²):</th>
+                        <td>
+                            <span th:text="${lote.metrosCuadrados}"></span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th class="fw-bold">Precio x m²:</th>
+                        <td>
+                            S/ <span th:text="${lote.precioM2}"></span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th class="fw-bold">Total estimado:</th>
+                        <td>
+                            <input type="text" class="form-control form-control-sm" id="precioTotal" name="precioTotal"
+                                th:value="${lote.metrosCuadrados * lote.precioM2}" readonly>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+            <!-- ===================== -->
+            <!--      DESCUENTO        -->
+            <!-- ===================== -->
+
+            <table class="table table-sm align-middle">
+                <tbody>
+
+                    <tr>
+                        <th class="fw-bold" style="width: 35%;">Descuento (%):</th>
+
+                        <td style="width: 15%;">
+                            <input type="number" class="form-control form-control-sm" id="descuento" name="descuento"
+                                value="0">
+                        </td>
+
+                        <th class="fw-bold" style="width: 25%;">Desc. (S/):</th>
+
+                        <td style="width: 25%;">
+                            <input type="text" class="form-control form-control-sm" id="descuentoMonto" readonly>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th class="fw-bold text-center" colspan="4">PRECIO FINAL</th>
+                    </tr>
+
+                    <tr>
+                        <td colspan="4">
+                            <input type="text" class="form-control fw-bold text-center" id="precioFinal"
+                                name="precioFinal" readonly>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+            <!-- ===================== -->
+            <!--    FINANCIAMIENTO     -->
+            <!-- ===================== -->
+
+            <h5 class="text-center mt-4 mb-2 fw-bold">FINANCIAMIENTO</h5>
+
+            <table class="table table-sm align-middle">
+                <tbody>
+
+                    <tr>
+                        <th class="fw-bold" style="width: 35%;">
+                            Inicial (%):<br><small>(mínimo 20%)</small>
+                        </th>
+
+                        <td style="width: 15%;">
+                            <input type="number" class="form-control form-control-sm" id="pagoInicial"
+                                name="pagoInicial" value="20">
+                        </td>
+
+                        <th class="fw-bold" style="width: 25%;">Inicial (S/):</th>
+
+                        <td style="width: 25%;">
+                            <input type="text" class="form-control form-control-sm" id="inicialMonto"
+                                name="inicialMonto">
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th class="fw-bold">Saldo (%):</th>
+
+                        <td>
+                            <input type="text" class="form-control form-control-sm" id="saldoPorcentaje" readonly>
+                        </td>
+
+                        <th class="fw-bold">Saldo (S/):</th>
+
+                        <td>
+                            <input type="text" class="form-control form-control-sm" id="saldoMonto" name="saldoMonto">
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th class="fw-bold">Plazo (meses):</th>
+
+                        <td>
+                            <input type="number" class="form-control form-control-sm" id="meses" name="meses" value="1">
+                        </td>
+
+                        <th class="fw-bold">Cuota (S/):</th>
+
+                        <td>
+                            <input type="text" class="form-control form-control-sm" id="cuotaMensual"
+                                name="cuotaMensual" readonly>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+            <!-- HIDDEN -->
+            <input type="hidden" id="loteId" name="loteId" th:value="${lote.id}">
+
+            <button type="submit" class="btn btn-primary w-100 mb-3">
+                Generar Cotización
+            </button>
+
+        </form>
+    </div>
+
+    <footer th:replace="layout :: footer"></footer>
+
+    </div>
 
 
-        <!-- ===================== -->
-        <!--      DESCUENTO        -->
-        <!-- ===================== -->
+    <script type="module" th:src="@{/js/cotizador.js}"></script>
+</body>
 
-        <table class="table table-sm align-middle">
-            <tbody>
-
-                <tr>
-                    <!-- Etiqueta izquierda -->
-                    <th class="fw-bold" style="width: 35%;">Descuento (%):</th>
-
-                    <!-- Input numérico -->
-                    <td style="width: 15%;">
-                        <input type="number" class="form-control form-control-sm" id="descuento" name="descuento"
-                            value="0">
-                    </td>
-
-                    <!-- Etiqueta derecha -->
-                    <th class="fw-bold" style="width: 25%;">Desc. (S/):</th>
-
-                    <!-- Input descuento en soles -->
-                    <td style="width: 25%;">
-                        <input type="text" class="form-control form-control-sm" id="descuentoMonto" readonly>
-                    </td>
-                </tr>
-
-
-                <tr>
-                    <th class="fw-bold text-center" colspan="4">PRECIO FINAL</th>
-                </tr>
-
-                <tr>
-                    <td colspan="4">
-                        <input type="text" class="form-control fw-bold text-center" id="precioFinal" name="precioFinal"
-                            readonly>
-                    </td>
-                </tr>
-
-            </tbody>
-        </table>
-
-
-        <!-- ===================== -->
-        <!--    FINANCIAMIENTO     -->
-        <!-- ===================== -->
-
-        <h5 class="text-center mt-4 mb-2 fw-bold">FINANCIAMIENTO</h5>
-
-        <table class="table table-sm align-middle">
-            <tbody>
-
-                <!-- INICIAL -->
-                <tr>
-                    <th class="fw-bold" style="width: 35%;">Inicial (%):<br><small>(mínimo 20%)</small></th>
-
-                    <td style="width: 15%;">
-                        <input type="number" class="form-control form-control-sm" id="pagoInicial" name="pagoInicial"
-                            value="20">
-                    </td>
-
-                    <th class="fw-bold" style="width: 25%;">Inicial (S/):</th>
-
-                    <td style="width: 25%;">
-                        <input type="text" class="form-control form-control-sm" id="inicialMonto" name="inicialMonto"
-                            >
-                    </td>
-                </tr>
-
-                <!-- SALDO -->
-                <tr>
-                    <th class="fw-bold">Saldo (%):</th>
-
-                    <td>
-                        <input type="text" class="form-control form-control-sm" id="saldoPorcentaje" readonly>
-                    </td>
-
-                    <th class="fw-bold">Saldo (S/):</th>
-
-                    <td>
-                        <input type="text" class="form-control form-control-sm" id="saldoMonto" name="saldoMonto"
-                            >
-                    </td>
-                </tr>
-
-                <!-- PLAZO + CUOTA -->
-                <tr>
-                    <th class="fw-bold">Plazo (meses):</th>
-
-                    <td>
-                        <input type="number" class="form-control form-control-sm" id="meses" name="meses" value="1">
-                    </td>
-
-                    <th class="fw-bold">Cuota (S/):</th>
-
-                    <td>
-                        <input type="text" class="form-control form-control-sm" id="cuotaMensual" name="cuotaMensual"
-                            readonly>
-                    </td>
-                </tr>
-
-            </tbody>
-        </table>
-
-
-
-        <!-- HIDDEN -->
-        <input type="hidden" id="loteId" name="loteId">
-
-
-        <button type="submit" class="btn btn-primary w-100 mb-3">
-            Generar Cotización
-        </button>
-
-    </form>
-
-</div>
+</html>

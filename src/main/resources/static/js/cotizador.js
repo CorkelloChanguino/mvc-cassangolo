@@ -1,123 +1,128 @@
-// ===============================
-// CARGAR DATOS DESDE EL MAPA
-// ===============================
-export function cargarDatosCotizador(lote) {
+document.addEventListener("DOMContentLoaded", () => {
 
-    // Mostrar textos
-    document.getElementById("etapaTexto").textContent = lote.etapa;
-    document.getElementById("manzanaTexto").textContent = lote.manzana;
-    document.getElementById("numeroTexto").textContent = lote.numero;
-    document.getElementById("areaTexto").textContent = lote.metrosCuadrados;
-    document.getElementById("precioM2Texto").textContent = lote.precioM2.toFixed(2);
+    // ===============================
+    // INICIALIZACIÓN DESDE HTML
+    // ===============================
+    const totalInput = document.getElementById("precioTotal");
+    const precioFinalInput = document.getElementById("precioFinal");
+    const descuentoInput = document.getElementById("descuento");
+    const descuentoMontoInput = document.getElementById("descuentoMonto");
 
-    // Guardar ID real
-    document.getElementById("loteId").value = lote.id;
+    const pagoInicialPorcentajeInput = document.getElementById("pagoInicial");
+    const inicialMontoInput = document.getElementById("inicialMonto");
 
-    const total = Number(lote.metrosCuadrados) * Number(lote.precioM2);
-    document.getElementById("precioTotal").value = total;
+    const saldoPorcentajeInput = document.getElementById("saldoPorcentaje");
+    const saldoMontoInput = document.getElementById("saldoMonto");
 
-    // Limpiar
-    ["precioFinal", "inicialMonto", "saldoMonto", "cuotaMensual"].forEach(id => {
-        document.getElementById(id).value = "";
-    });
+    const mesesInput = document.getElementById("meses");
+    const cuotaMensualInput = document.getElementById("cuotaMensual");
 
-    // Guardar en memoria
-    window.loteSeleccionado = {
-        ...lote,
-        metrosCuadrados: Number(lote.metrosCuadrados),
-        precioM2: Number(lote.precioM2)
-    };
-}
+    let total = parseFloat(totalInput.value) || 0;
 
-// ===============================
-// RECÁLCULO AUTOMÁTICO GENERAL
-// ===============================
-function recalcular() {
+    // ===============================
+    // CÁLCULO GENERAL
+    // ===============================
+    function recalcularDesdeTotal() {
 
-    if (!window.loteSeleccionado) return;
+        const descuentoPorc = parseFloat(descuentoInput.value) || 0;
+        const descuentoMonto = total * (descuentoPorc / 100);
+        const precioFinal = total - descuentoMonto;
 
-    const total = window.loteSeleccionado.metrosCuadrados * window.loteSeleccionado.precioM2;
+        descuentoMontoInput.value = descuentoMonto.toFixed(2);
+        precioFinalInput.value = precioFinal.toFixed(2);
 
-    const d = parseFloat(document.getElementById("descuento").value) || 0;
-    const i = parseFloat(document.getElementById("pagoInicial").value) || 20;
-    const m = parseFloat(document.getElementById("meses")?.value) || 1;
+        recalcularDesdeInicial();
+    }
 
-    const precioFinal = total - (total * d / 100);
-    set("precioFinal", precioFinal);
+    // ===============================
+    // DESDE INICIAL (%)
+    // ===============================
+    function recalcularDesdeInicial() {
 
-    const descuentoMonto = total * (d / 100);
-    set("descuentoMonto", descuentoMonto.toFixed(2));
+        const precioFinal = parseFloat(precioFinalInput.value) || 0;
+        let inicialPorc = parseFloat(pagoInicialPorcentajeInput.value) || 0;
 
-    const inicialMonto = precioFinal * (i / 100);
-    const saldoMonto = precioFinal - inicialMonto;
+        if (inicialPorc > 100) inicialPorc = 100;
+        if (inicialPorc < 0) inicialPorc = 0;
 
-    set("inicialMonto", inicialMonto);
-    set("saldoMonto", saldoMonto);
-    set("saldoPorcentaje", (100 - i).toFixed(2));
+        const inicialMonto = precioFinal * (inicialPorc / 100);
+        const saldoMonto = precioFinal - inicialMonto;
+        const saldoPorc = 100 - inicialPorc;
 
-    const cuota = saldoMonto / m;
-    set("cuotaMensual", cuota.toFixed(2));
-}
+        inicialMontoInput.value = inicialMonto.toFixed(2);
+        saldoMontoInput.value = saldoMonto.toFixed(2);
+        saldoPorcentajeInput.value = saldoPorc.toFixed(2);
 
+        recalcularCuota();
+    }
 
-// ===============================
-// EDICIÓN MANUAL DE MONTOS
-// ===============================
+    // ===============================
+    // DESDE INICIAL (S/)
+    // ===============================
+    function recalcularDesdeInicialMonto() {
 
-// Inicial S/
-document.getElementById("inicialMonto").addEventListener("input", function () {
-    if (!window.loteSeleccionado) return;
+        const precioFinal = parseFloat(precioFinalInput.value) || 0;
+        let inicialMonto = parseFloat(inicialMontoInput.value) || 0;
 
-    const precioFinal = parseFloat(document.getElementById("precioFinal").value) || 0;
-    let inicial = parseFloat(this.value) || 0;
+        if (inicialMonto > precioFinal) inicialMonto = precioFinal;
+        if (inicialMonto < 0) inicialMonto = 0;
 
-    if (inicial > precioFinal) inicial = precioFinal;
+        const inicialPorc = (inicialMonto / precioFinal) * 100;
+        const saldoMonto = precioFinal - inicialMonto;
 
-    const porcentaje = (inicial / precioFinal) * 100;
-    const saldo = precioFinal - inicial;
+        pagoInicialPorcentajeInput.value = inicialPorc.toFixed(2);
+        saldoMontoInput.value = saldoMonto.toFixed(2);
+        saldoPorcentajeInput.value = (100 - inicialPorc).toFixed(2);
 
-    set("pagoInicial", porcentaje.toFixed(2));
-    set("saldoMonto", saldo);
-    set("saldoPorcentaje", (100 - porcentaje).toFixed(2));
+        recalcularCuota();
+    }
 
-    const meses = parseFloat(document.getElementById("meses").value) || 1;
-    set("cuotaMensual", (saldo / meses).toFixed(2));
+    // ===============================
+    // DESDE SALDO (S/)
+    // ===============================
+    function recalcularDesdeSaldoMonto() {
+
+        const precioFinal = parseFloat(precioFinalInput.value) || 0;
+        let saldoMonto = parseFloat(saldoMontoInput.value) || 0;
+
+        if (saldoMonto > precioFinal) saldoMonto = precioFinal;
+        if (saldoMonto < 0) saldoMonto = 0;
+
+        const inicialMonto = precioFinal - saldoMonto;
+        const inicialPorc = (inicialMonto / precioFinal) * 100;
+
+        inicialMontoInput.value = inicialMonto.toFixed(2);
+        pagoInicialPorcentajeInput.value = inicialPorc.toFixed(2);
+        saldoPorcentajeInput.value = (100 - inicialPorc).toFixed(2);
+
+        recalcularCuota();
+    }
+
+    // ===============================
+    // CUOTA
+    // ===============================
+    function recalcularCuota() {
+
+        const saldoMonto = parseFloat(saldoMontoInput.value) || 0;
+        const meses = parseInt(mesesInput.value) || 1;
+
+        cuotaMensualInput.value = (saldoMonto / meses).toFixed(2);
+    }
+
+    // ===============================
+    // LISTENERS
+    // ===============================
+    descuentoInput.addEventListener("input", recalcularDesdeTotal);
+
+    pagoInicialPorcentajeInput.addEventListener("input", recalcularDesdeInicial);
+    inicialMontoInput.addEventListener("input", recalcularDesdeInicialMonto);
+
+    saldoMontoInput.addEventListener("input", recalcularDesdeSaldoMonto);
+
+    mesesInput.addEventListener("input", recalcularCuota);
+
+    // ===============================
+    // ARRANQUE
+    // ===============================
+    recalcularDesdeTotal();
 });
-
-// Saldo S/
-document.getElementById("saldoMonto").addEventListener("input", function () {
-    if (!window.loteSeleccionado) return;
-
-    const precioFinal = parseFloat(document.getElementById("precioFinal").value) || 0;
-    let saldo = parseFloat(this.value) || 0;
-
-    if (saldo > precioFinal) saldo = precioFinal;
-
-    const inicial = precioFinal - saldo;
-    const porcentaje = (inicial / precioFinal) * 100;
-
-    set("inicialMonto", inicial);
-    set("pagoInicial", porcentaje.toFixed(2));
-    set("saldoPorcentaje", (100 - porcentaje).toFixed(2));
-
-    const meses = parseFloat(document.getElementById("meses").value) || 1;
-    set("cuotaMensual", (saldo / meses).toFixed(2));
-});
-
-
-// ===============================
-// Helper
-// ===============================
-function set(id, value) {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.value = value;
-}
-
-// ===============================
-// LISTENERS DE CÁLCULO NORMAL
-// ===============================
-document.getElementById("descuento")?.addEventListener("input", recalcular);
-document.getElementById("pagoInicial")?.addEventListener("input", recalcular);
-document.getElementById("meses")?.addEventListener("input", recalcular);
-

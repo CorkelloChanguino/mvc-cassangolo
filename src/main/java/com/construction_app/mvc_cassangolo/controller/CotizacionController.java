@@ -29,16 +29,6 @@ public class CotizacionController {
     private final LoteService loteService;
     private final CotizacionService cotizacionService;
 
-    // 1. Mostrar formulario de cotización
-    @GetMapping("/crear")
-    public String mostrarFormulario(@RequestParam("loteId") Integer loteId, Model model) {
-
-        Lote lote = loteService.obtenerPorId(loteId);
-        model.addAttribute("lote", lote);
-
-        return "cotizaciones/form";
-    }
-
     // 2. Procesar la cotización y redirigir a descarga del PDF
     @PostMapping("/crear")
     public String crearCotizacion(
@@ -49,6 +39,9 @@ public class CotizacionController {
     ) {
 
         Lote lote = loteService.obtenerPorId(loteId);
+        if (!"DISPONIBLE".equals(lote.getEstado())) {
+            throw new RuntimeException("Lote no disponible");
+        }
 
         Usuario vendedor = SecurityUtils.getUsuarioActual();
         if (vendedor == null) {
@@ -77,9 +70,8 @@ public class CotizacionController {
                 .body(pdf);
     }
 
-
     @GetMapping
-     public String listarCotizaciones(Model model, Authentication auth) {
+    public String listarCotizaciones(Model model, Authentication auth) {
 
         // Usuario logueado
         Usuario u = SecurityUtils.getUsuarioActual();
@@ -96,6 +88,17 @@ public class CotizacionController {
 
         return "cotizaciones";
     }
+
+    @GetMapping("/cotizar/lote/{id}")
+    public String cotizarLote(@PathVariable int id, Model model) {
+
+        Lote lote = loteService.obtenerPorId(id);
+
+        if (!"DISPONIBLE".equals(lote.getEstado())) {
+            return "redirect:/lotes/mapa?error=no-disponible";
+        }
+
+        model.addAttribute("lote", lote);
+        return "cotizador";
+    }
 }
-
-
