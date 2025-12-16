@@ -71,16 +71,16 @@
 }
 
 .lote.disponible {
-    fill-opacity:0.3 !important;
+    fill-opacity:0.1 !important;
 }
 
 .lote.vendido {
     pointer-events: none;
-    fill-opacity:0.4 !important;
+    fill-opacity:0.1 !important;
 }
 
 .lote.reservado {
-    fill-opacity:0.4 !important;
+    fill-opacity:0.1 !important;
 }
 
 .lote.seleccionado{
@@ -92,8 +92,8 @@
     fill:red !important;
 }
 
-.lote.disponible:hover { fill: #c2ffaf !important; }
-.lote.reservado:hover { fill: #fd6614 !important; }
+.lote.disponible:hover { fill: #eaa911  !important; }
+.lote.reservado:hover { fill: #eaa911 !important; }
 
 #tooltip {
     font-weight: bold;
