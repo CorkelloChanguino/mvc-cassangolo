@@ -71,12 +71,10 @@
 }
 
 .lote.disponible {
-    fill: #dcdcdc !important;
     fill-opacity:0.3 !important;
 }
 
 .lote.vendido {
-    fill: rgb(253, 204, 102) !important;
     pointer-events: none;
     fill-opacity:0.4 !important;
 }
